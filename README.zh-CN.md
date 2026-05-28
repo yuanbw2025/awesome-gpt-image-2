@@ -1,6 +1,6 @@
 <p align="center"><img src="./data/images/banner.svg" alt="GPT-Image2 Prompt System" width="800" /></p>
 
-<h3 align="center">Prompt as Code | GPT-Image2 工业级提示词引擎与模板库，370+ 个案例逆向工程，20+ 套工业级模板</h3>
+<h3 align="center">AI 视觉场景库 | 中文 AI 图像案例、提示词槽位、场景模板与实战生图指南</h3>
 
 <p align="center">
   <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/github/stars/freestylefly/awesome-gpt-image-2?style=flat-square&color=rgb(25%2C%20121%2C%20255)" alt="Stars"></a>
@@ -15,6 +15,19 @@
 
 > 不定期更新最新的玩法，欢迎star。
 > 本项目由 [词元 API](https://ciyuan.today/) 提供赞助支持。词元 API 是一个 AI 聚合平台，可以高性价比使用 GPT Image 2。
+
+## Fork 开发方向
+
+这个 fork 会保留原项目的 GPT-Image2 案例库，把它作为视觉参考底座；在此基础上，继续补一层更适合中文创作者学习和实操的指导系统：
+
+- 按场景拆解提示词必填槽位，覆盖封面、缩略图、知识卡片、电商主图、课程视觉、角色设定图、PPT 插图等常见需求
+- 在网页里加入可填写的 Prompt Builder，让用户按槽位补信息并复制结构化提示词
+- 增加坏图诊断卡，针对文字错乱、信息太满、主体不突出、色彩廉价、风格漂移、产品不像等问题给出修复方向
+- 后续把同一套知识整理成 Agent Skill 和可导出的提示词包，方便在 Codex、Claude Code、Cursor 等工具里复用
+
+开发规划见：[DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md)。
+
+原始上游项目：[freestylefly/awesome-gpt-image-2](https://github.com/freestylefly/awesome-gpt-image-2)。本 fork 保留上游署名与许可证信息。
 
 ## 🌐 可视化网站
 

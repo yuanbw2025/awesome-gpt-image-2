@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import './styles.css';
 import { isSupabaseConfigured, supabase } from './supabaseClient';
+import visualGuides from '../data/visual-guides.json';
 import wechatCommunityImage from './assets/wechat-community.jpg';
 import skillExampleImage from '../agents/skills/gpt-image-2-style-library/assets/city-life-system-map.png';
 
@@ -45,6 +46,7 @@ const copy = {
     loading: 'Loading GPT-Image2 cases...',
     brand: 'GPT-Image2 Gallery',
     navCases: 'Cases',
+    navGuide: 'Guide',
     navSkill: 'Skill',
     navTemplates: 'Templates',
     navCommunity: 'Community',
@@ -66,6 +68,24 @@ const copy = {
       'Each template is distilled from real GPT-Image2 examples and includes structure, constraints, and pitfalls for production use.',
     templateKind: 'Prompt Template',
     openTemplate: 'Open Template',
+    guideEyebrow: 'Prompt learning system',
+    guideTitle: 'Choose a scene, fill the missing slots, and repair bad outputs.',
+    guideSubtitle:
+      'The gallery gives visual evidence. This guide turns those examples into scene slots, builder prompts, and failure diagnosis for repeatable image generation.',
+    guideScenes: 'Scene Templates',
+    guideBuilder: 'Prompt Builder',
+    guideDiagnosis: 'Bad Image Diagnosis',
+    guideCopyPrompt: 'Copy Built Prompt',
+    guideCopied: 'Prompt copied',
+    guidePromptPreview: 'Generated prompt',
+    guideRequiredSlots: 'Required slots',
+    guideModels: 'Models',
+    guideMustHave: 'Must have',
+    guideAvoid: 'Avoid',
+    guideFixPrompt: 'Repair prompt',
+    guideSelectScene: 'Select scene',
+    guideChinesePrompt: 'Chinese',
+    guideEnglishPrompt: 'English',
     skillEyebrow: 'Agent skill',
     skillTitle: 'Bring the GPT-Image2 style library into Claude Code and Codex.',
     skillSubtitle:
@@ -249,6 +269,7 @@ const copy = {
     loading: '正在加载 GPT-Image2 案例...',
     brand: 'GPT-Image2 画廊',
     navCases: '案例',
+    navGuide: '指南',
     navSkill: '技能',
     navTemplates: '模板',
     navCommunity: '交流群',
@@ -270,6 +291,24 @@ const copy = {
       '每套模板都从真实 GPT-Image2 案例里提炼，包含结构、约束和防坑经验，适合生产流程直接复用。',
     templateKind: '提示词模板',
     openTemplate: '打开模板',
+    guideEyebrow: '生图学习系统',
+    guideTitle: '选场景、补槽位、诊断废图。',
+    guideSubtitle:
+      '案例库负责提供视觉证据，这一层把案例沉淀为场景槽位、可填写模板和废图修复方法，让用户真正学会怎么稳定生图。',
+    guideScenes: '场景模板',
+    guideBuilder: 'Prompt 生成器',
+    guideDiagnosis: '废图诊断',
+    guideCopyPrompt: '复制生成 Prompt',
+    guideCopied: 'Prompt 已复制',
+    guidePromptPreview: '生成结果',
+    guideRequiredSlots: '必填槽位',
+    guideModels: '适合模型',
+    guideMustHave: '必须做到',
+    guideAvoid: '避免问题',
+    guideFixPrompt: '修复 Prompt',
+    guideSelectScene: '选择场景',
+    guideChinesePrompt: '中文',
+    guideEnglishPrompt: '英文',
     skillEyebrow: 'Agent Skill',
     skillTitle: '把 GPT-Image2 风格库装进 Claude Code 和 Codex。',
     skillSubtitle:
@@ -2530,6 +2569,167 @@ function TemplateSection({ language, styleLibrary, onOpenTemplate }) {
   );
 }
 
+function fillTemplate(template, values) {
+  return template.replace(/\{\{(.*?)\}\}/g, (_match, key) => {
+    const value = values[key.trim()];
+    return value && value.trim() ? value.trim() : `[${key.trim()}]`;
+  });
+}
+
+function GuideSection({ language, copiedId, onCopyText }) {
+  const t = copy[language];
+  const scenes = visualGuides.scenes || [];
+  const failureModes = visualGuides.failureModes || [];
+  const [activeSceneId, setActiveSceneId] = useState(scenes[0]?.id || '');
+  const [promptLanguage, setPromptLanguage] = useState(language === 'zh' ? 'zh' : 'en');
+  const [slotValues, setSlotValues] = useState({});
+  const activeScene = scenes.find((scene) => scene.id === activeSceneId) || scenes[0];
+
+  useEffect(() => {
+    setPromptLanguage(language === 'zh' ? 'zh' : 'en');
+  }, [language]);
+
+  useEffect(() => {
+    if (!activeScene) return;
+    setSlotValues((current) => {
+      const next = {};
+      activeScene.slots.forEach((slot) => {
+        next[slot.key] = current[slot.key] || '';
+      });
+      return next;
+    });
+  }, [activeSceneId, activeScene]);
+
+  if (!activeScene) return null;
+
+  const builtPrompt = fillTemplate(activeScene.promptTemplate[promptLanguage] || activeScene.promptTemplate.zh, slotValues);
+  const copyId = `guide-${activeScene.id}-${promptLanguage}`;
+
+  return (
+    <section className="guideSection" id="guide">
+      <div className="sectionHead guideHead">
+        <div>
+          <span className="eyebrow">
+            <Sparkles size={16} />
+            {t.guideEyebrow}
+          </span>
+          <h2>{t.guideTitle}</h2>
+          <p>{t.guideSubtitle}</p>
+        </div>
+      </div>
+
+      <div className="guideLayout">
+        <aside className="sceneLibrary">
+          <div className="guidePanelTitle">
+            <strong>{t.guideScenes}</strong>
+            <span>{scenes.length}</span>
+          </div>
+          <div className="sceneList">
+            {scenes.map((scene) => (
+              <button
+                className={cx('sceneButton', scene.id === activeScene.id && 'active')}
+                type="button"
+                onClick={() => setActiveSceneId(scene.id)}
+                key={scene.id}
+              >
+                <span>{textFor(scene.title, language)}</span>
+                <small>{scene.ratio}</small>
+              </button>
+            ))}
+          </div>
+        </aside>
+
+        <div className="promptBuilder">
+          <div className="builderTop">
+            <div>
+              <span className="builderLabel">{t.guideBuilder}</span>
+              <h3>{textFor(activeScene.title, language)}</h3>
+              <p>{textFor(activeScene.useCase, language)}</p>
+            </div>
+            <div className="promptLanguageToggle">
+              <button
+                className={cx(promptLanguage === 'zh' && 'active')}
+                type="button"
+                onClick={() => setPromptLanguage('zh')}
+              >
+                {t.guideChinesePrompt}
+              </button>
+              <button
+                className={cx(promptLanguage === 'en' && 'active')}
+                type="button"
+                onClick={() => setPromptLanguage('en')}
+              >
+                {t.guideEnglishPrompt}
+              </button>
+            </div>
+          </div>
+
+          <div className="slotGrid">
+            {activeScene.slots.map((slot) => (
+              <label className="slotField" key={slot.key}>
+                <span>{textFor(slot.label, language)}</span>
+                <input
+                  value={slotValues[slot.key] || ''}
+                  onChange={(event) => setSlotValues((current) => ({ ...current, [slot.key]: event.target.value }))}
+                  placeholder={textFor(slot.placeholder, language)}
+                />
+              </label>
+            ))}
+          </div>
+
+          <div className="promptOutput">
+            <div className="promptOutputHead">
+              <strong>{t.guidePromptPreview}</strong>
+              <button type="button" onClick={() => onCopyText(builtPrompt, copyId)}>
+                {copiedId === copyId ? <Check size={16} /> : <Copy size={16} />}
+                {copiedId === copyId ? t.guideCopied : t.guideCopyPrompt}
+              </button>
+            </div>
+            <pre>{builtPrompt}</pre>
+          </div>
+        </div>
+
+        <aside className="sceneChecklist">
+          <div className="checkBlock">
+            <strong>{t.guideModels}</strong>
+            <div className="miniTagRow">
+              {activeScene.models.map((model) => <span key={model}>{model}</span>)}
+            </div>
+          </div>
+          <div className="checkBlock">
+            <strong>{t.guideMustHave}</strong>
+            <ul>{activeScene.mustHave.map((item) => <li key={item}>{item}</li>)}</ul>
+          </div>
+          <div className="checkBlock">
+            <strong>{t.guideAvoid}</strong>
+            <ul>{activeScene.avoid.map((item) => <li key={item}>{item}</li>)}</ul>
+          </div>
+        </aside>
+      </div>
+
+      <div className="diagnosisBlock">
+        <div className="diagnosisHead">
+          <span className="eyebrow">{t.guideDiagnosis}</span>
+          <h3>{language === 'zh' ? '从废图现象反推补救 Prompt' : 'Repair prompts by failure symptom'}</h3>
+        </div>
+        <div className="diagnosisGrid">
+          {failureModes.map((mode) => (
+            <article className="diagnosisCard" key={mode.id}>
+              <h4>{textFor(mode.title, language)}</h4>
+              <p>{textFor(mode.symptom, language)}</p>
+              <div className="miniTagRow">
+                {mode.causes.slice(0, 3).map((cause) => <span key={cause}>{cause}</span>)}
+              </div>
+              <strong>{t.guideFixPrompt}</strong>
+              <code>{mode.fixPrompt}</code>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PromptCard({
   caseItem,
   copied,
@@ -2930,7 +3130,11 @@ function App() {
   useGaPageViews();
   const [siteData, setSiteData] = useState(null);
   const [styleLibrary, setStyleLibrary] = useState(null);
-  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'en');
+  const [language, setLanguage] = useState(() => {
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) return savedLanguage;
+    return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  });
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [style, setStyle] = useState('All');
@@ -3263,6 +3467,7 @@ function App() {
         </a>
         <div className="topbarControls">
           <nav>
+            <a href="#guide">{t.navGuide}</a>
             <a href="#gallery">{t.navCases}</a>
             <a href="#templates">{t.navTemplates}</a>
             <a href="#agent-skill">{t.navSkill}</a>
@@ -3312,6 +3517,12 @@ function App() {
           </button>
         ))}
       </section>
+
+      <GuideSection
+        language={language}
+        copiedId={copiedId}
+        onCopyText={copyText}
+      />
 
       <section className="gallerySection" id="gallery">
         <div className="sectionHead">

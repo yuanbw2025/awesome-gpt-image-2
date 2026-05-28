@@ -1,6 +1,6 @@
 <p align="center"><img src="./data/images/banner.svg" alt="GPT-Image2 Prompt System" width="800" /></p>
 
-<h3 align="center">Prompt as Code | GPT-Image2 Industrial Prompt Engine & Template Library, 400+ Reverse-Engineered Cases, 20+ Industrial Templates</h3>
+<h3 align="center">AI Visual Patterns | Chinese AI image cases, prompt slots, visual scene templates, and practical generation guidance</h3>
 
 <p align="center">
   <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/github/stars/freestylefly/awesome-gpt-image-2?style=flat-square&color=rgb(25%2C%20121%2C%20255)" alt="Stars"></a>
@@ -15,6 +15,19 @@
 
 > Updated irregularly with new workflows. Stars are welcome.
 > This project is sponsored by [Ciyuan API](https://ciyuan.today/), an AI aggregation platform for cost-effective GPT Image 2 access.
+
+## Fork Direction
+
+This fork keeps the original GPT-Image2 case library as a reference base, then adds a more practical learning layer for Chinese creators:
+
+- scene-based prompt slots for covers, thumbnails, cards, e-commerce images, course visuals, character sheets, and presentation illustrations
+- a browser-side prompt builder for filling required slots and copying structured prompts
+- failure diagnosis cards for common bad outputs such as garbled text, weak subject, cluttered layout, cheap colors, style drift, and inaccurate products
+- a roadmap for turning the same knowledge into reusable agent skills and prompt packs
+
+Development plan: [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md).
+
+Original upstream: [freestylefly/awesome-gpt-image-2](https://github.com/freestylefly/awesome-gpt-image-2). This fork preserves upstream attribution and license information.
 
 ## 🌐 Visual Website
 
