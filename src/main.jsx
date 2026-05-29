@@ -34,7 +34,7 @@ import {
 } from 'lucide-react';
 import './styles.css';
 import { isSupabaseConfigured, supabase } from './supabaseClient';
-import visualGuides from '../data/visual-guides.json';
+import visualGuides from './data/visual-guides.json';
 import wechatCommunityImage from './assets/wechat-community.jpg';
 import skillExampleImage from '../agents/skills/gpt-image-2-style-library/assets/city-life-system-map.png';
 
@@ -3133,7 +3133,7 @@ function App() {
   const [language, setLanguage] = useState(() => {
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) return savedLanguage;
-    return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    return 'zh';
   });
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
